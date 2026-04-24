@@ -1,0 +1,63 @@
+@prefix mom: <https://nicolasdb.github.io/mapsofmaking_ontology/ns#> .
+@prefix schema: <https://schema.org/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# MOM Ontology v0 — Maps of Making vocabulary
+# A minimal application vocabulary extending Schema.org
+
+<https://nicolasdb.github.io/mapsofmaking_ontology/ns#>
+  a owl:Ontology ;
+  rdfs:label "Maps of Making Ontology" ;
+  owl:versionInfo "0.1" ;
+  rdfs:comment "Minimal application vocabulary for federated maker space infrastructure. Extends Schema.org with space-specific operational metadata." .
+
+# Classes
+
+mom:Space
+  a owl:Class ;
+  rdfs:label "Space" ;
+  rdfs:comment "A physical or virtual location where making activities occur (e.g., makerspace, fabrication lab, art studio)." .
+
+mom:Coordinator
+  a owl:Class ;
+  rdfs:label "Coordinator" ;
+  rdfs:comment "A person or organization responsible for managing a space's presence in the federation." .
+
+# Properties
+
+mom:sourceUrl
+  a owl:DatatypeProperty ;
+  rdfs:label "Source URL" ;
+  rdfs:comment "The canonical URL endpoint where the space publishes its JSON-LD profile; used by heartbeat to detect changes." ;
+  rdfs:domain mom:Space ;
+  rdfs:range xsd:anyURI .
+
+mom:confirmedAt
+  a owl:DatatypeProperty ;
+  rdfs:label "Confirmed At" ;
+  rdfs:comment "Timestamp (ISO 8601) when the space's presence was last confirmed by the federation heartbeat agent." ;
+  rdfs:domain mom:Space ;
+  rdfs:range xsd:dateTime .
+
+mom:operationalState
+  a owl:DatatypeProperty ;
+  rdfs:label "Operational State" ;
+  rdfs:comment "Freshness lifecycle state of the space: 'seeded' (initial), 'aging' (stale), 'zombie' (unreachable), or 'dead' (retired). From ADR-006." ;
+  rdfs:domain mom:Space ;
+  rdfs:range xsd:string .
+
+mom:visibility
+  a owl:DatatypeProperty ;
+  rdfs:label "Visibility" ;
+  rdfs:comment "Federation visibility of the space: 'public' (discoverable on map) or 'hidden' (included in queries but not listed). From ADR-006." ;
+  rdfs:domain mom:Space ;
+  rdfs:range xsd:string .
+
+mom:geolocationFidelity
+  a owl:DatatypeProperty ;
+  rdfs:label "Geolocation Fidelity" ;
+  rdfs:comment "Precision level of the space's geo coordinates: 'exact' (GPS), 'approximate' (address lookup), 'city' (city-level), or 'country' (country-level). From Story 0.1." ;
+  rdfs:domain mom:Space ;
+  rdfs:range xsd:string .
