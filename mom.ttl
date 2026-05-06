@@ -3,6 +3,8 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix wd: <https://www.wikidata.org/entity/> .
 
 # MOM Ontology v0 — Maps of Making vocabulary
 # A minimal application vocabulary extending Schema.org
@@ -41,10 +43,17 @@ mom:confirmedAt
   rdfs:domain mom:Space ;
   rdfs:range xsd:dateTime .
 
+mom:dynamicState
+  a owl:DatatypeProperty ;
+  rdfs:label "Dynamic State" ;
+  rdfs:comment "Real-time open/closed state of the space, equivalent to SpaceAPI v14 `state`. Distinct from mom:operationalState (long-term lifecycle). Values: 'open', 'closed', 'unknown'." ;
+  rdfs:domain mom:Space ;
+  rdfs:range xsd:string .
+
 mom:operationalState
   a owl:DatatypeProperty ;
   rdfs:label "Operational State" ;
-  rdfs:comment "Freshness lifecycle state of the physical space. Values: 'seeded' (imported, never verified ⚪), 'confirmed' (heartbeat responded 🔵), 'stale' (was confirmed, going quiet ⚠️), 'zombie' (unreachable 🧟), 'dead' (permanently closed as a physical space 💀). From ADR-006." ;
+  rdfs:comment "Lifecycle or participation state of a space. Lifecycle (in order): 'seeded' (imported, never verified ⚪) → 'confirmed' (heartbeat responded 🔵) → 'aging' (going quiet ⚠️) → 'zombie' (unreachable 🧟) → 'dead' (permanently closed 🪦). Out-of-lifecycle: 'error' (endpoint URL broken — red ×, independent of freshness cycle); 'unlinked' (space exists but not connected to any network — present but independent, shown as dashed circle). From ADR-006." ;
   rdfs:domain mom:Space ;
   rdfs:range xsd:string .
 
@@ -68,3 +77,125 @@ mom:geolocationNote
   rdfs:comment "Human-readable explanation when geolocationFidelity is not exact (e.g. 'Address incomplete — showing city-level location'). Displayed as a UI hint, not an error." ;
   rdfs:domain mom:Space ;
   rdfs:range xsd:string .
+
+# Activity vocabulary
+# ──────────────────────────────────────────────────────────────────────────────
+# mom:Activity is a SKOS concept scheme. Each activity is a skos:Concept with:
+#   - skos:prefLabel (canonical English tag, lowercase-hyphenated)
+#   - skos:altLabel  (synonyms, other languages, common misspellings)
+#   - skos:broader   (parent concept — enables hierarchical queries)
+#   - owl:sameAs     (Wikidata IRI when available — enables cross-map alignment)
+#
+# Design intent: schema:knowsAbout values in space JSON-LD are entry points.
+# Oxigraph resolves raw strings → concept IRIs at ingest time, so map queries
+# operate on concepts and their broader/narrower relations, not raw strings.
+# Multilingual labels live here; space documents stay language-neutral.
+# ──────────────────────────────────────────────────────────────────────────────
+
+mom:ActivityScheme
+  a skos:ConceptScheme ;
+  skos:prefLabel "Maps of Making Activity Vocabulary" ;
+  rdfs:comment "Controlled vocabulary of making activities. Add concepts here; add altLabels freely. Do not remove prefLabels without a migration." .
+
+# ── Top-level domains ──────────────────────────────────────────────────────────
+
+mom:DigitalFabrication
+  a skos:Concept ;
+  skos:inScheme mom:ActivityScheme ;
+  skos:prefLabel "digital-fabrication" ;
+  skos:altLabel "fab", "digital manufacturing", "fabrication numérique", "digitale fabricatie" ;
+  rdfs:label "Digital Fabrication" .
+
+mom:Electronics
+  a skos:Concept ;
+  skos:inScheme mom:ActivityScheme ;
+  skos:prefLabel "electronics" ;
+  skos:altLabel "électronique", "elektronica", "circuits", "hardware" ;
+  rdfs:label "Electronics" ;
+  owl:sameAs wd:Q11650 .
+
+mom:SoftwareAndAI
+  a skos:Concept ;
+  skos:inScheme mom:ActivityScheme ;
+  skos:prefLabel "software-and-ai" ;
+  skos:altLabel "software", "logiciel", "programmation", "coding" ;
+  rdfs:label "Software & AI" .
+
+mom:Games
+  a skos:Concept ;
+  skos:inScheme mom:ActivityScheme ;
+  skos:prefLabel "games" ;
+  skos:altLabel "game design", "game development", "jeux", "spelontwikkeling" ;
+  rdfs:label "Games" .
+
+# ── Digital Fabrication narrower ──────────────────────────────────────────────
+
+mom:ThreeDPrinting
+  a skos:Concept ;
+  skos:inScheme mom:ActivityScheme ;
+  skos:prefLabel "3d-printing" ;
+  skos:altLabel "3D printing", "FDM", "SLA", "impression 3D", "3D printen", "additive manufacturing" ;
+  skos:broader mom:DigitalFabrication ;
+  rdfs:label "3D Printing" ;
+  owl:sameAs wd:Q229367 .
+
+mom:LaserCutting
+  a skos:Concept ;
+  skos:inScheme mom:ActivityScheme ;
+  skos:prefLabel "laser-cutting" ;
+  skos:altLabel "laser cutter", "laser engraving", "découpe laser", "lasercutting" ;
+  skos:broader mom:DigitalFabrication ;
+  rdfs:label "Laser Cutting" .
+
+mom:CNC
+  a skos:Concept ;
+  skos:inScheme mom:ActivityScheme ;
+  skos:prefLabel "cnc" ;
+  skos:altLabel "CNC milling", "CNC routing", "fraiseuse CNC", "CNC frezen", "subtractive manufacturing" ;
+  skos:broader mom:DigitalFabrication ;
+  rdfs:label "CNC Machining" ;
+  owl:sameAs wd:Q174689 .
+
+mom:VinylCutting
+  a skos:Concept ;
+  skos:inScheme mom:ActivityScheme ;
+  skos:prefLabel "vinyl-cutting" ;
+  skos:altLabel "vinyl cutter", "plotter", "découpe vinyle", "sticker cutting" ;
+  skos:broader mom:DigitalFabrication ;
+  rdfs:label "Vinyl Cutting" .
+
+# ── Electronics narrower ──────────────────────────────────────────────────────
+
+mom:EmbeddedSystems
+  a skos:Concept ;
+  skos:inScheme mom:ActivityScheme ;
+  skos:prefLabel "embedded-systems" ;
+  skos:altLabel "embedded", "microcontrollers", "Arduino", "ESP32", "Raspberry Pi",
+                "IoT", "internet of things", "systèmes embarqués", "AIoT", "edge devices",
+                "edge computing", "TinyML" ;
+  skos:broader mom:Electronics ;
+  rdfs:label "Embedded Systems" ;
+  owl:sameAs wd:Q189443 .
+
+# ── Software & AI narrower ────────────────────────────────────────────────────
+
+mom:AgenticAI
+  a skos:Concept ;
+  skos:inScheme mom:ActivityScheme ;
+  skos:prefLabel "agentic-ai" ;
+  skos:altLabel "AI agents", "LLM agents", "agent workflows", "agentic workflows",
+                "AI tooling", "AI tools", "IA agentique", "autonomous agents",
+                "multi-agent systems", "bmad", "claude code" ;
+  skos:broader mom:SoftwareAndAI ;
+  rdfs:label "Agentic AI" .
+
+# ── Games narrower ────────────────────────────────────────────────────────────
+
+mom:GameDesign
+  a skos:Concept ;
+  skos:inScheme mom:ActivityScheme ;
+  skos:prefLabel "game-design" ;
+  skos:altLabel "game development", "game jam", "video games", "tabletop games",
+                "conception de jeux", "speldesign" ;
+  skos:broader mom:Games ;
+  rdfs:label "Game Design" .
