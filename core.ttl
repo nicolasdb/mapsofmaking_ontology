@@ -1,0 +1,160 @@
+@prefix core: <https://nicolasdb.github.io/mapsofmaking_ontology/ns/core#> .
+@prefix mom:  <https://nicolasdb.github.io/mapsofmaking_ontology/ns#> .
+@prefix schema: <https://schema.org/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ──────────────────────────────────────────────────────────────────────────────
+# MOM Layer 2 — core: base schema
+#
+# The minimum shared vocabulary every Maps of Making community inherits.
+# Operationalizes the three-layer model from mom-schema-architecture-handoff.md
+# (Story 3.5). See ADR-016 for the four-layer bundle model.
+#
+# Namespace authority: https://nicolasdb.github.io/mapsofmaking_ontology/ only.
+# core: lives UNDER that authority as the .../ns/core# sub-namespace.
+# (The handoff body's illustrative non-canonical IRIs are illegal — its
+#  correction block is authoritative over its body.)
+#
+# Layer ownership:
+#   - Identity fields  → pure Schema.org terms, REUSED not re-minted (rdfs:seeAlso)
+#   - Operational fields → owned by mom: (the .../ns# namespace), referenced here
+#   - core:Place + core:relationships → the only NEW terms this file mints
+#
+# Sync model: this file is the working copy. The maintainer manually syncs it to
+# the github.com/nicolasdb/mapsofmaking_ontology repo. Do not git-push there.
+# ──────────────────────────────────────────────────────────────────────────────
+
+<https://nicolasdb.github.io/mapsofmaking_ontology/ns/core#>
+  a owl:Ontology ;
+  rdfs:label "Maps of Making — core base schema (Layer 2)" ;
+  owl:versionInfo "0.1" ;
+  rdfs:comment "Layer 2 base vocabulary: portable identity + operational fields + the cross-community relationship link. Every MOM community bundle inherits core:." .
+
+# ── Class ─────────────────────────────────────────────────────────────────────
+
+core:Place
+  a owl:Class ;
+  rdfs:subClassOf mom:Space ;
+  rdfs:label "Place" ;
+  rdfs:comment "A portable, community-agnostic node in the federation. The base type every community @type array extends (fab:Fablab, omt:Practice, edu:LearningCentre …)." .
+
+# ── Identity group — inherited from SpaceAPI, REUSED as schema.org terms ───────
+# These are NOT minted in core:. They are pure Schema.org properties; core:
+# only points at them so a reader of core.ttl sees the full identity surface.
+
+core:nameField
+  a rdfs:Resource ;
+  rdfs:label "core identity: name" ;
+  rdfs:comment "Layer: identity. Reuse schema:name directly — do not re-mint. SpaceAPI `space`." ;
+  rdfs:seeAlso schema:name .
+
+core:websiteField
+  a rdfs:Resource ;
+  rdfs:label "core identity: website" ;
+  rdfs:comment "Layer: identity. Reuse schema:url directly. SpaceAPI `url`." ;
+  rdfs:seeAlso schema:url .
+
+core:logoField
+  a rdfs:Resource ;
+  rdfs:label "core identity: logo" ;
+  rdfs:comment "Layer: identity. Reuse schema:logo directly. SpaceAPI `logo`." ;
+  rdfs:seeAlso schema:logo .
+
+core:locationField
+  a rdfs:Resource ;
+  rdfs:label "core identity: geo location" ;
+  rdfs:comment "Layer: identity. Reuse schema:geo (→ schema:GeoCoordinates blank node). SpaceAPI `location.lat`/`location.lon`." ;
+  rdfs:seeAlso schema:geo .
+
+core:addressField
+  a rdfs:Resource ;
+  rdfs:label "core identity: address" ;
+  rdfs:comment "Layer: identity. SpaceAPI `location.address`. NOTE: the live transformer currently emits this as mom:address (xsd:string), not schema:address — see crosswalk.csv." ;
+  rdfs:seeAlso schema:address , mom:address .
+
+core:contactField
+  a rdfs:Resource ;
+  rdfs:label "core identity: contact" ;
+  rdfs:comment "Layer: identity. SpaceAPI `contact` object (v15: email, phone, twitter, mastodon, keymasters …). The transformer serializes the full contact dict as a JSON string under the predicate schema:contactJson — a non-standard IRI that does not exist on schema.org. Documented as-emitted; schema:contactPoint is the canonical Schema.org term. Reconciling is future work. See crosswalk.csv contact row." ;
+  rdfs:seeAlso mom:contactJson .
+
+core:descriptionField
+  a rdfs:Resource ;
+  rdfs:label "core identity: description" ;
+  rdfs:comment "Layer: identity. Reuse schema:description directly." ;
+  rdfs:seeAlso schema:description .
+
+core:openingHoursField
+  a rdfs:Resource ;
+  rdfs:label "core identity: opening hours" ;
+  rdfs:comment "Layer: identity. Reuse schema:openingHours directly. SpaceAPI `opening_hours`." ;
+  rdfs:seeAlso schema:openingHours .
+
+core:isOpenField
+  a rdfs:Resource ;
+  rdfs:label "core identity: open/closed state" ;
+  rdfs:comment "Layer: identity. SpaceAPI `state.open`. The transformer emits mom:openNow (xsd:boolean). Distinct from operationalState lifecycle." ;
+  rdfs:seeAlso mom:openNow .
+
+# ── MOM-operational group — owned by mom:, referenced here ────────────────────
+# Not in SpaceAPI. These properties are declared in mom.ttl (.../ns#). core.ttl
+# documents that they belong to the always-loaded operational layer; it does NOT
+# redefine them.
+
+core:endpointUrlField
+  a rdfs:Resource ;
+  rdfs:label "core operational: endpoint URL" ;
+  rdfs:comment "Layer: operational (mom:). The URL the heartbeat fetches. Reuses mom:endpointUrl." ;
+  rdfs:seeAlso mom:endpointUrl .
+
+core:freshnessField
+  a rdfs:Resource ;
+  rdfs:label "core operational: freshness / lifecycle state" ;
+  rdfs:comment "Layer: operational (mom:). Lifecycle: seeded→confirmed→aging→zombie + terminal closed/dead. Reuses mom:operationalState." ;
+  rdfs:seeAlso mom:operationalState .
+
+core:lastFetchedField
+  a rdfs:Resource ;
+  rdfs:label "core operational: last fetched" ;
+  rdfs:comment "Layer: operational (mom:). Timestamp of the last heartbeat fetch. Reuses mom:lastFetched." ;
+  rdfs:seeAlso mom:lastFetched .
+
+core:sourceLabelField
+  a rdfs:Resource ;
+  rdfs:label "core operational: source label" ;
+  rdfs:comment "Layer: operational (mom:). Provenance label, e.g. 'VOW network', 'self-registered'. Reuses mom:source." ;
+  rdfs:seeAlso mom:source .
+
+core:communitiesField
+  a rdfs:Resource ;
+  rdfs:label "core operational: communities" ;
+  rdfs:comment "Layer: operational (mom:). The community namespace IRIs this node participates in. Reuses mom:memberOf." ;
+  rdfs:seeAlso mom:memberOf .
+
+# ── Relationship group — the ONE new term core: mints ─────────────────────────
+
+core:relationships
+  a owl:ObjectProperty ;
+  rdfs:domain core:Place ;
+  rdfs:label "relationships" ;
+  rdfs:comment "Layer: relationship. The typed, tagged cross-community link property. Each value is a node {type, target_url, tags, since}. This is how cross-community SPARQL traversal works without the two communities agreeing on any field name — the link is explicit in the graph. See ADR-016 (the 'wormhole'). v1: structure documented here; emission is future work." .
+
+core:relationshipType
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:string ;
+  rdfs:label "relationship type" ;
+  rdfs:comment "Layer: relationship. e.g. 'partner', 'certified_by', 'member_of'. Applied to blank nodes that are values of core:relationships." .
+
+core:relationshipTarget
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:anyURI ;
+  rdfs:label "relationship target URL" ;
+  rdfs:comment "Layer: relationship. The endpoint URL of the linked node. Applied to blank nodes that are values of core:relationships." .
+
+core:relationshipSince
+  a owl:DatatypeProperty ;
+  rdfs:range xsd:string ;
+  rdfs:label "relationship since" ;
+  rdfs:comment "Layer: relationship. When the link was established (e.g. '2024-03'). Applied to blank nodes that are values of core:relationships." .

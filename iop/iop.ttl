@@ -1,0 +1,12 @@
+@prefix iop: <https://nicolasdb.github.io/mapsofmaking_ontology/iop#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# IoP Ontology — Internet of Places (stub)
+# Minimal vocabulary for federated spatial infrastructure.
+# Expanded in Epic 6 (NL bot with ontology context).
+
+<https://nicolasdb.github.io/mapsofmaking_ontology/iop#>
+  a owl:Ontology ;
+  rdfs:label "Internet of Places Ontology" ;
+  rdfs:comment "Broader ontology context for federated spatial infrastructure. Core classes and properties expanded in Epic 6 NL→SPARQL task." .

@@ -1,0 +1,18 @@
+{
+  "@context": {
+    "mom": "https://nicolasdb.github.io/mapsofmaking_ontology/ns#",
+    "mak": "https://nicolasdb.github.io/mapsofmaking_ontology/resource/",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "name": "schema:name",
+    "description": "schema:description",
+    "geo": "schema:geo",
+    "latitude": "schema:latitude",
+    "longitude": "schema:longitude",
+    "sourceUrl": "mom:sourceUrl",
+    "confirmedAt": "mom:confirmedAt",
+    "operationalState": "mom:operationalState",
+    "visibility": "mom:visibility",
+    "geolocationFidelity": "mom:geolocationFidelity"
+  }
+}

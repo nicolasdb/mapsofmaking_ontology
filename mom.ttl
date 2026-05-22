@@ -53,7 +53,14 @@ mom:dynamicState
 mom:operationalState
   a owl:DatatypeProperty ;
   rdfs:label "Operational State" ;
-  rdfs:comment "Lifecycle or participation state of a space. Lifecycle (in order): 'seeded' (imported, never verified ⚪) → 'confirmed' (heartbeat responded 🔵) → 'aging' (going quiet ⚠️) → 'zombie' (unreachable 🧟) → 'dead' (permanently closed 🪦). Out-of-lifecycle: 'error' (endpoint URL broken — red ×, independent of freshness cycle); 'unlinked' (space exists but not connected to any network — present but independent, shown as dashed circle). From ADR-006." ;
+  rdfs:comment "Lifecycle or participation state of a space. Main lifecycle (in order): 'seeded' (imported, never verified ⚪) → 'confirmed' (heartbeat responded 🔵) → 'aging' (going quiet ⚠️) → 'zombie' (unreachable 🧟). Terminal states: 'closed' (operator/coordinator-declared retirement, authoritative 🪦) and 'dead' (auto-inferred after N failed heartbeat cycles, inferred 🪦). Out-of-lifecycle: 'error' (endpoint URL broken — red ×, independent of freshness cycle); 'unlinked' (space exists but not connected to any network — present but independent, shown as dashed circle). Real-time open/closed boolean belongs to mom:dynamicState, not this property — they are distinct axes. From ADR-006." ;
+  rdfs:domain mom:Space ;
+  rdfs:range xsd:string .
+
+mom:deathReason
+  a owl:DatatypeProperty ;
+  rdfs:label "Death Reason" ;
+  rdfs:comment "Provenance of a terminal operationalState. Values: 'closed' (coordinator explicitly retired the space via the closure protocol — authoritative, human-confirmed) or 'dead' (auto-inferred by the heartbeat after the zombie→dead lifecycle threshold — no human confirmation). A future value 'explicit' is reserved for endpoints that publish a machine-readable retirement signal (protocol TBD). Absent on non-terminal states. Pair with mom:operationalState to distinguish authoritative closure from lifecycle inference." ;
   rdfs:domain mom:Space ;
   rdfs:range xsd:string .
 
@@ -199,3 +206,53 @@ mom:GameDesign
                 "conception de jeux", "speldesign" ;
   skos:broader mom:Games ;
   rdfs:label "Game Design" .
+
+# Ontology gap tracking
+# ──────────────────────────────────────────────────────────────────────────────
+# mom:OntologyGap records an input (query text or activity tag) that matched no
+# known concept. It is the on-ramp for emergent community ontology: gap term →
+# curation → concept minting → cross-community bridge discovery. NOT a janitorial
+# dump. Declared here (cheap) for Story 6.3, which builds gap-triple emission.
+# Today, unmapped activity tags are logged to gap_log.txt (plain text, see
+# transformer.py::_log_unmapped_tags) — no triples are emitted yet. See ADR-016.
+# ──────────────────────────────────────────────────────────────────────────────
+
+mom:OntologyGap
+  a owl:Class ;
+  rdfs:label "Ontology Gap" ;
+  rdfs:comment "An input (query text or activity tag) that did not match any known concept — logged for ontology curation. The on-ramp for emergent community ontology, not an error log. See ADR-016 and Story 6.3." .
+
+mom:rawQuery
+  a owl:DatatypeProperty ;
+  rdfs:label "Raw Query" ;
+  rdfs:comment "The unmatched input text that triggered the gap (a natural-language query or a raw activity tag)." ;
+  rdfs:domain mom:OntologyGap ;
+  rdfs:range xsd:string .
+
+mom:rawLLMOutput
+  a owl:DatatypeProperty ;
+  rdfs:label "Raw LLM Output" ;
+  rdfs:comment "The raw LLM output associated with the gap, when the gap arose from an NL query (Story 6.3)." ;
+  rdfs:domain mom:OntologyGap ;
+  rdfs:range xsd:string .
+
+mom:gapTimestamp
+  a owl:DatatypeProperty ;
+  rdfs:label "Gap Timestamp" ;
+  rdfs:comment "ISO 8601 datetime the ontology gap was recorded." ;
+  rdfs:domain mom:OntologyGap ;
+  rdfs:range xsd:dateTime .
+
+mom:countryCode
+  a owl:DatatypeProperty ;
+  rdfs:label "Country Code" ;
+  rdfs:comment "Country or jurisdiction code for the space. ISO 3166-1 alpha-2 codes are the common case, but extension codes are explicitly allowed (e.g. 'sol-3' for international waters / extraterrestrial installations where no national jurisdiction applies)." ;
+  rdfs:domain mom:Space ;
+  rdfs:range xsd:string .
+
+mom:timeZone
+  a owl:DatatypeProperty ;
+  rdfs:label "Time Zone" ;
+  rdfs:comment "IANA time zone identifier (e.g. 'Europe/Brussels') or UTC offset string (e.g. 'UTC+0') for the space's local time. Extension values are allowed for non-standard cases." ;
+  rdfs:domain mom:Space ;
+  rdfs:range xsd:string .

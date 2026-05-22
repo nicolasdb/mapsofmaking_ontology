@@ -1,0 +1,34 @@
+concept,core_field,spaceapi_field,fab_field,omt_field,edu_field,mapping_type,notes
+name,schema:name,space,,,,skos:exactMatch,Layer: identity. Required. Reused schema.org term.
+geo,schema:geo,location.lat+location.lon,,,,skos:exactMatch,Layer: identity. lat+lon combined into a schema:GeoCoordinates blank node.
+website,schema:url,url,,,,skos:exactMatch,Layer: identity. Reused schema.org term.
+opening_hours,schema:openingHours,opening_hours,,,,skos:exactMatch,Layer: identity.
+description,schema:description,description,,,,skos:exactMatch,Layer: identity.
+logo,schema:logo,logo,,,,skos:exactMatch,Layer: identity.
+contact,schema:contactJson,contact,,,,direct,"Layer: identity. SpaceAPI `contact` object (v15: email, phone, twitter, mastodon, keymasters …). Transformer serializes full dict as a JSON string. NON-STANDARD IRI: schema:contactJson does not exist on schema.org (schema:contactPoint is the canonical term). Documented as-emitted per AC2; reconciling is future work."
+address,mom:address,location.address,,,,direct,"Layer: identity. INCOHERENCE: handoff Layer-2 table and ADR-015 say schema:address -> schema:PostalAddress; the live transformer (transformer.py:507) emits mom:address as xsd:string. Documented as-emitted per AC2."
+open_now,mom:openNow,state.open,,,,direct,Layer: identity. core: concept isOpen. Dynamic open/closed boolean; distinct from operationalState lifecycle.
+last_open_change,mom:lastOpenChange,state.lastchange,,,,direct,Layer: identity. Timestamp of last open/closed transition.
+operational_state,mom:operationalState,,,,,derived,Layer: operational. Lifecycle seeded->confirmed->aging->zombie + terminal closed/dead. Derived by classify_lifecycle().
+endpoint_health,mom:endpointHealth,,,,,derived,Layer: operational. Derived by classify_endpoint_health().
+last_fetched,mom:lastFetched,,,,,derived,Layer: operational. Timestamp of the last heartbeat fetch.
+last_updated,mom:lastUpdated,,,,,derived,Layer: operational. Content-change gated; re-inserted (preserved) on a no-diff cycle.
+source,mom:source,,,,,metadata,Layer: operational. Provenance label (VOW network / self-registered).
+member_of,mom:memberOf,,,,,metadata,Layer: operational. Network/community membership IRIs. core: concept communities.
+endpoint_url,mom:endpointUrl,,,,,metadata,Layer: operational. URL the heartbeat fetched from.
+geolocation_fidelity,mom:geolocationFidelity,,,,,derived,Layer: operational. exact|approximate|city|country.
+geolocation_note,mom:geolocationNote,,,,,derived,Layer: operational. Human-readable hint when fidelity is not exact.
+api_compatibility,mom:apiCompatibility,api,,,,direct,Layer: operational. SpaceAPI version compatibility.
+networks,mom:networks,ext.networks,,,,direct,Layer: operational.
+subset,mom:subset,,,,,metadata,Layer: operational. Progressive-disclosure subset marker.
+next_unlock,mom:nextUnlock,,,,,metadata,Layer: operational.
+snapshot_date,mom:snapshotDate,,,,,snapshot,Layer: operational. Written to the snapshot named graph.
+snapshot_summary,mom:snapshotSummary,,,,,snapshot,Layer: operational. Written to the snapshot named graph.
+last_http_status,mom:lastHttpStatus,,,,,snapshot,Layer: operational. Written to the snapshot named graph.
+raw_content,mom:rawContent,,,,,snapshot,Layer: operational. Raw fetch body capped at 50KB. Zone 3 trust receipt.
+activities,schema:knowsAbout,ext.tags / specialties,fab:equipment,omt:treatmentFocus,edu:subjects,skos:closeMatch,"concept commons (shared layer) - future: own namespace. schema:knowsAbout is the shared concept pivot (the wormhole hub) - every community's specialised skill field aliases to it. Resolved by resolve_activities() + activity_map.yaml; unmapped tags fall back to raw string and are logged to gap_log.txt, never dropped. omt:/edu: columns are status: draft."
+fab_space_type,,,fab:spaceType,,,extension,status: draft - fab: namespace design is future work (Epic 9 fab.ttl extraction). Placeholder; no core: equivalent.
+omt_certification,,,,omt:certificationBody,,extension,status: draft - omt: namespace design out of scope; requires OMT practitioner community input.
+edu_curriculum,,,,,edu:curriculumTags,extension,status: draft - edu: namespace design out of scope; requires education community input.
+country_code,mom:countryCode,location.country_code,,,,direct,"Layer: identity. SpaceAPI location.country_code. ISO 3166-1 alpha-2 common case; extension codes allowed (e.g. sol-3 for international waters). Added Story 3.11."
+timezone,mom:timeZone,location.timezone,,,,direct,"Layer: identity. SpaceAPI location.timezone. IANA tz identifier or UTC offset string. Added Story 3.11."
