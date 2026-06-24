@@ -1,12 +1,52 @@
 @prefix iop: <https://nicolasdb.github.io/mapsofmaking_ontology/iop#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix mom: <https://nicolasdb.github.io/mapsofmaking_ontology/ns#> .
+@prefix schema: <https://schema.org/> .
 
-# IoP Ontology — Internet of Places (stub)
-# Minimal vocabulary for federated spatial infrastructure.
-# Expanded in Epic 6 (NL bot with ontology context).
+# IoP Ontology — Internet of Places (minimal spatial vocabulary)
+# Expanded in Story 6.4 for NL→SPARQL context.
+# Equipment/capability semantics belong in OKW crosswalk (ontology/crosswalks/mom-to-okw.ttl).
+# Do NOT publish to ontology repo until OKW interop direction is decided.
 
 <https://nicolasdb.github.io/mapsofmaking_ontology/iop#>
   a owl:Ontology ;
   rdfs:label "Internet of Places Ontology" ;
-  rdfs:comment "Broader ontology context for federated spatial infrastructure. Core classes and properties expanded in Epic 6 NL→SPARQL task." .
+  rdfs:comment "Vocabulary for federated spatial infrastructure — makerspace edition." .
+
+iop:Place a owl:Class ;
+  rdfs:label "Place" ;
+  rdfs:comment "A physical or virtual place where making happens." ;
+  skos:closeMatch schema:LocalBusiness , mom:Space .
+
+iop:Makerspace a owl:Class ;
+  rdfs:subClassOf iop:Place ;
+  rdfs:label "Makerspace" ;
+  rdfs:comment "A community-run workshop with shared tools and open membership." .
+
+iop:Activity a owl:Class ;
+  rdfs:label "Activity" ;
+  rdfs:comment "A type of making activity or specialty." ;
+  skos:closeMatch schema:knowsAbout .
+
+iop:Equipment a owl:Class ;
+  rdfs:label "Equipment" ;
+  rdfs:comment "A tool or machine available at a place. STUB ONLY — capability/equipment semantics map to OKW (Open Know-Where) via ontology/crosswalks/mom-to-okw.ttl; do not add properties here." .
+
+iop:Network a owl:Class ;
+  rdfs:label "Network" ;
+  rdfs:comment "A federation or association of places." ;
+  skos:closeMatch mom:memberOf .
+
+iop:hasActivity a owl:ObjectProperty ;
+  rdfs:label "has activity" ;
+  rdfs:domain iop:Place ;
+  rdfs:range iop:Activity ;
+  skos:closeMatch schema:knowsAbout .
+
+iop:memberOfNetwork a owl:ObjectProperty ;
+  rdfs:label "member of network" ;
+  rdfs:domain iop:Place ;
+  rdfs:range iop:Network ;
+  skos:closeMatch mom:memberOf .

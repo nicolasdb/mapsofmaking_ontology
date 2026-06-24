@@ -256,3 +256,19 @@ mom:timeZone
   rdfs:comment "IANA time zone identifier (e.g. 'Europe/Brussels') or UTC offset string (e.g. 'UTC+0') for the space's local time. Extension values are allowed for non-standard cases." ;
   rdfs:domain mom:Space ;
   rdfs:range xsd:string .
+
+# Tier-2 horizontal fields (mom: namespace — cross-network)
+
+mom:sdgs
+  a owl:DatatypeProperty ;
+  rdfs:label "Sustainable Development Goals" ;
+  rdfs:comment "UN SDG numbers (1–17) that this space's activities address. Transversal across networks — Tier 2 mom: field." ;
+  rdfs:domain mom:Space ;
+  rdfs:range xsd:integer .
+
+mom:opening_hours
+  a owl:DatatypeProperty ;
+  rdfs:label "Opening hours" ;
+  rdfs:comment "SpaceAPI v15 opening_hours string. Cross-network horizontal field — Tier 2 mom: namespace. Maps to schema:openingHours in the extractor." ;
+  rdfs:domain mom:Space ;
+  rdfs:range xsd:string .
