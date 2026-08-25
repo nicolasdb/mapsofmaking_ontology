@@ -69,6 +69,13 @@ mom:verifiedSource
   rdfs:domain mom:Supplier ;
   rdfs:range xsd:anyURI .
 
+mom:operatedBy
+  a owl:ObjectProperty ;
+  rdfs:label "Operated By" ;
+  rdfs:comment "Links a supplier entry to another mom:Supplier that is the same current legal operator — used when acquisitions or rebrands have consolidated formerly-independent businesses under one owner, but the entries stay separate because each is a distinct physical, geolocatable branch with its own member commentary. Do NOT merge such entries: deleting a branch loses a real address and an independent recommendation. Example (Story 10.1): OpenFab members separately recommended 'Nordic' and 'Exobois' before both were acquired by Bois Watteau; each keeps its own supplier record with mom:operatedBy pointing at Watteau's." ;
+  rdfs:domain mom:Supplier ;
+  rdfs:range mom:Supplier .
+
 # Supplier category vocabulary
 # ──────────────────────────────────────────────────────────────────────────────
 # Trilingual FR/EN/NL from the outset: these lists are curated in the space's own
